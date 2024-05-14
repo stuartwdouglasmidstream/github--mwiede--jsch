@@ -1,0 +1,10 @@
+FROM quay.io/redhat-user-workloads/rhtap-build-tenant/jvm-build-service-builder-images/ubi8:d6c417eae5fe32f3207918c6395881843e534a5d
+USER 0
+WORKDIR /root
+RUN mkdir -p /root/project /root/software/settings /original-content/marker && microdnf install vim curl
+ENV JBS_DISABLE_CACHE=true
+COPY .jbs/run-build.sh /root
+COPY . /root/project/workspace/
+RUN /root/run-build.sh
+FROM scratch
+COPY --from=0 /root/project/artifacts /root/artifacts
